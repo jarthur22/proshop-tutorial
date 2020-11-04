@@ -9,7 +9,14 @@ const router = express.Router();
 router.get('/', (req, res) => {
     Product.find({}).then(results => {
         res.json(results);
-    }).catch(err => console.log(err));
+    }).catch(err => {
+        const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+        res.status(statusCode);
+        res.json({
+            message: err.message,
+            stack: process.env.NODE_ENV === 'production' ? null : err.stack
+        });
+    });
 });
 
 //@desc Fetch a single product
@@ -22,7 +29,14 @@ router.get('/:id', (req, res) => {
         }else{
             res.status(400).json({message: 'Product not found.'});
         }
-    }).catch(err => console.log(err));
+    }).catch(err => {
+        const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+        res.status(statusCode);
+        res.json({
+            message: err.message,
+            stack: process.env.NODE_ENV === 'production' ? null : err.stack
+        });
+    });
 });
 
 module.exports = router;
