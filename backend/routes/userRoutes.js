@@ -15,7 +15,7 @@ router.post('/', (req, res) => {
             });
         }else{
             User.create({
-                name, email, password
+                name, email, password: hashPassword(password)
             }).then(user => {
                 if(user){
                     res.status(201).json({
@@ -109,6 +109,10 @@ const matchPassword = async (enteredPassword, objPassword) => {
     }
 }
 
-
+const hashPassword = (password) => {
+    const salt = bcrypt.genSaltSync(10);
+    const hashed = bcrypt.hashSync(password, salt);
+    return hashed;
+}
 
 module.exports = router;
