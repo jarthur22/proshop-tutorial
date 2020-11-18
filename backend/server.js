@@ -1,11 +1,14 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./routes/userRoutes');
 const connectDB = require('./config/db');
 
 dotenv.config();
 
 const app = express();
+
+app.use(express.json());
 
 connectDB();
 
@@ -14,6 +17,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/products', productRoutes);
+
+app.use('/api/users', userRoutes);
 
 app.use((req, res, next) => {
     res.status(404);

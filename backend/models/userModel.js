@@ -21,6 +21,16 @@ const userSchema = mongoose.Schema({
     }
 },{
     timestamps: true
-})
+});
+
+userSchema.methods.matchPassword = (enteredPassword) => {
+    bcrypt.compare(enteredPassword, this.password).then(res => {
+        console.log(res);
+        return res;
+    }).catch(err => {
+        console.log('what');
+        console.log(err);
+    });
+}
 
 module.exports = User = mongoose.model('User', userSchema);
