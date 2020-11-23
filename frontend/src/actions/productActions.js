@@ -5,7 +5,6 @@ const listProducts = () => (dispatch) => {
     axios.get('/api/products').then(res => {
         dispatch(({type: 'PRODUCT_LIST_SUCCESS', payload: res.data}));
     }).catch(err => {
-        console.log(err.message);
         dispatch({
             type: 'PRODUCT_LIST_FAILED', 
             payload: err.response && err.response.data.message ?
