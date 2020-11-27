@@ -77,6 +77,7 @@ router.post("/login", (req, res) => {
     });
 });
 
+//get user profile
 router.get('/profile',
     (req, res, next) => protect(req, res, next), 
     (req, res) => {
@@ -92,6 +93,43 @@ router.get('/profile',
                 res.status(404).json({
                     message: 'User not found'
                 })
+            }
+        }).catch(err => {
+            res.status(500).json({
+                message: 'Could not connect to database.'
+            });
+        });
+    }
+);
+
+//update user profile
+router.put('/profile', 
+    (req, res, next) => protect(req, res, next), 
+    (req, res) => {
+        User.findById(req.user._id).then(user => {
+            if(user){
+                user.name = req.body.name || user.name;
+                user.email = req.body.email || user.email;
+                if(req.body.password){
+                    user.password = hashPassword(req.body.password);
+                }
+
+                user.save().then(updatedUser => {
+                    res.json({
+                        _id: updatedUser._id,
+                        name: updatedUser.name,
+                        email: updatedUser.email,
+                        isAdmin: updatedUser.isAdmin,
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        message: 'Could not connect to database.'
+                    });
+                });
+            }else{
+                res.status(404).json({
+                    message: 'User not found'
+                });
             }
         }).catch(err => {
             res.status(500).json({
