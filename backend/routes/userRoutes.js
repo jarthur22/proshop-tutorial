@@ -122,6 +122,7 @@ router.put('/profile',
                         isAdmin: updatedUser.isAdmin,
                     });
                 }).catch(err => {
+                    console.log(err)
                     res.status(500).json({
                         message: 'Could not connect to database.'
                     });
@@ -132,6 +133,7 @@ router.put('/profile',
                 });
             }
         }).catch(err => {
+            console.log(err)
             res.status(500).json({
                 message: 'Could not connect to database.'
             });
