@@ -41,4 +41,56 @@ router.post('/',
     }
 );
 
+router.get('/:id', 
+    (req, res, next) => protect(req, res, next), 
+    (req, res) => {
+        Order.findById(req.params.id).populate('user', 'name email').then(order => {
+            if(order){
+                res.json(order);
+            }else{
+                res.status(500).json({
+                    message: 'Order not found.'
+                });
+            }
+        }).catch(err => {
+            res.status(500).json({
+                message: 'Could not connect to database.'
+            });
+        })
+    }
+);
+
+router.put('/:id/pay', 
+    (req, res, next) => protect(req, res, next), 
+    (req, res) => {
+        Order.findById(req.params.id).then(order => {
+            if(order){
+                order.isPaid = true;
+                order.paidAt = Date.now();
+                order.paymentResults = {
+                    id: req.body.id,
+                    status: req.body.status,
+                    update_time: req.body.update_time,
+                    email_address: req.body.payer.email_address
+                }
+                order.save().then(updatedOrder => {
+                    res.json(updatedOrder);
+                }).catch(err => {
+                    res.status(500).json({
+                        message: 'Could not save order.'
+                    });
+                })
+            }else{
+                res.status(500).json({
+                    message: 'Order not found.'
+                });
+            }
+        }).catch(err => {
+            res.status(500).json({
+                message: 'Could not connect to database.'
+            });
+        });
+    }
+);
+
 module.exports = router;
